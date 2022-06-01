@@ -1,0 +1,57 @@
+---
+name: cardano-cli release build
+on:
+  release:
+    types: 
+      - prereleased
+
+jobs:
+  build_cardano-cli_image:
+    runs-on: ubuntu-latest
+    outputs:
+      cardano-cli_tag: ${{ steps.cardano_node_tag_version.outputs.cardano-cli_tag }}
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Get cardano-cli tag version
+        id: cardano_node_tag_version
+        run: |       
+          echo "::set-output name=cardano-cli_tag::$(echo $GITHUB_REF_NAME | cut -d "." -f 1-3)"
+
+      - name: Check cardano_version
+        run: |
+          echo "Cardano version to be built: ${{ steps.cardano_node_tag_version.outputs.cardano-cli_tag }}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          build-args: |
+            GIT_NODE_REV=${{ steps.cardano_node_tag_version.outputs.cardano-cli_tag }}
+          tags: cardano-cli:test-only
+
+  post_comment_to_prerelease:
+    needs: build_cardano-cli_image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Edit prerelase Description
+        env:
+          TMP_FOLDER: /tmp
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          hub release show ${{ github.event.release.tag_name }} > ${{ env.TMP_FOLDER }}/body
+          cat <<'EOF' >> ${{ env.TMP_FOLDER }}/body  
+          
+          This is the yacc-builder matching version `${{ needs.build_cardano-cli_image.outputs.cardano-cli_tag }}` of the 
+          `cardano-node`.
+          
+          EOF
+          hub release edit -F ${{ env.TMP_FOLDER }}/body ${{ github.event.release.tag_name }}
