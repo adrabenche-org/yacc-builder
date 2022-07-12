@@ -8,7 +8,7 @@ On this table you will find the build arguments. You can send it using the `--bu
 
 | Argument Key| Type |Argument default value |What it is|
 |---|---|---|---|
-|GIT_NODE_REV| ARG| Last tagged version| This value specify based on which tag the Docker image will be built. For instance, if you want the *cardano-cli* version *1.34.1* then the value will be `1.34.1`.
+|GIT_NODE_REV| ARG| Last tagged version| This value specify based on which tag the Docker image will be built. For instance, if you want the *cardano-cli* version *1.35.1* then the value will be `1.35.1`.
 
 ## Examples
 For all the example, we are asuming you already cloned and accessed the repository folder.
@@ -17,9 +17,9 @@ For all the example, we are asuming you already cloned and accessed the reposito
 ```bash
 $ sudo docker build -t cardano-cli:latest .
 ```
-* Build a docker image based on version `1.34.0`:
+* Build a docker image based on version `1.35.0`:
 ```bash
-sudo docker build -t cardano-cli:1.34.0 . --build-arg GIT_NODE_REV=1.34.0
+sudo docker build -t cardano-cli:1.35.0 . --build-arg GIT_NODE_REV=1.35.0
 ```
 * Find the `cardano-cli` version built:
 ```bash
@@ -28,7 +28,7 @@ sudo docker build -t cardano-cli:1.34.0 . --build-arg GIT_NODE_REV=1.34.0
 The output will be version and GH revision at the time being, .
 ```
 cardano-cli 1.33.0 - linux-x86_64 - ghc-8.10
-git rev d5345054750de7b659a08de92b004de717a376c0
+git rev d5355054750de7b659a08de92b004de717a376c0
 ```
 
 # About versions
@@ -38,9 +38,9 @@ The release numbers match as follows:
 * First three numbers matches the `cardano-cli` version
 * Last number match the `yacc-builder` release.
 
-So, for instance `1.34.0.1` means:
+So, for instance `1.35.0.1` means:
 
-* `1.34.0` is the `cardano-node` release version.
+* `1.35.0` is the `cardano-node` release version.
 * `1` is the `yacc-builder` release version.
 
-Then, next release of `yacc-builder` for cardano-node `1.34.0` will be `1.34.0.2`.
+Then, next release of `yacc-builder` for cardano-node `1.35.0` will be `1.35.0.2`.
